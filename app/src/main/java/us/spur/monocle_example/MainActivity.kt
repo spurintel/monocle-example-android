@@ -23,9 +23,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("Monocle", "setting up permissions launcher")
         val fineLocationGranted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] ?: false
         val coarseLocationGranted = permissions[Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
-
         if (fineLocationGranted || coarseLocationGranted) {
-            setupMonocle()
             CoroutineScope(Dispatchers.Main).launch {
                 runMonocleAssessment()
             }
@@ -35,21 +33,28 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val success = setupMonocle()
+        if (!success) {
+            CoroutineScope(Dispatchers.IO).launch {
+                withContext(Dispatchers.Main) {
+                    findViewById<TextView>(R.id.assessmentResultTextView).text =
+                        "Please set your site token in the strings.xml file"
+                }
+            }
+            return
+        }
 
         if (hasLocationPermission()) {
-            setupMonocle()
             CoroutineScope(Dispatchers.Main).launch {
-                Log.d("Monocle", "running monocle assessment")
                 runMonocleAssessment()
             }
         } else {
-            // Request the location permissions
             requestLocationPermissions()
         }
     }
 
     // This method sets up us.spur.monocle.Monocle
-    private fun setupMonocle() {
+    private fun setupMonocle(): Boolean {
         Log.d("Monocle", "setting up monocle")
         val siteToken = getString(R.string.site_token)
         // If you do not want all the plugins to run, you can specify the ones you want
@@ -57,8 +62,14 @@ class MainActivity : AppCompatActivity() {
 //            token = siteToken,
 //            enabledPlugins = MonoclePluginOptions.DNS or MonoclePluginOptions.LOCATION,
 //        )
-        val config = MonocleConfig(token = siteToken)
-        Monocle.setup(config, this)
+
+        if (siteToken.isEmpty() || siteToken == "CHANGEME") {
+            return false
+        } else {
+            val config = MonocleConfig(token = siteToken)
+            Monocle.setup(config, this)
+            return true
+        }
     }
 
     private suspend fun runMonocleAssessment() {
@@ -77,7 +88,8 @@ class MainActivity : AppCompatActivity() {
                 Log.d("Monocle", "Assessment failed: ${error.message}")
                 runOnUiThread {
                     // Assuming you have a TextView with the id `assessmentResultTextView`
-                    findViewById<TextView>(R.id.assessmentResultTextView).text = "Assessment failed: ${error.message}"
+                    findViewById<TextView>(R.id.assessmentResultTextView).text =
+                        "Assessment failed: ${error.message}"
                 }
             }
         )
