@@ -14,6 +14,7 @@
         android:id="@+id/assessmentResultTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/assessment_result_will_be_displayed_here" />
+        android:text="@string/assessment_result_will_be_displayed_here"
+        android:padding="16dp" />
 
 </LinearLayout>
