@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Monocle</string>
+    <string name="site_token">CHANGEME</string>
+    <string name="assessment_result_will_be_displayed_here">Assessment result will be displayed here</string>
 </resources>
