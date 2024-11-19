@@ -34,12 +34,29 @@ dependencies {
 }
 ```
 
+Add the dependencies for the monocle sdk
+```gradle
+
+dependencies {
+    // ... other dependencies
+
+    implementation (libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.play.services.location)
+    implementation(libs.okhttp)
+}
+```
+
 4. Sync Project:
 After making these changes, click "Sync Now" in the bar that appears at the top of Android Studio to synchronize your project with the updated Gradle files.
 
 ### Explanation:
 The repositories block with flatDir tells Gradle to look for dependencies in the libs directory.
 The implementation line in the dependencies block includes the .aar file as a dependency, making its classes and resources available to your module.
+
+## Site Token
+In order for the SDK to work you must set the `site_token` res/values/strings.xml file.  This is the token that is provided to you by Monocle when you sign up for an account.
 
 ### Important Notes:
 Replace monocle.aar with the actual name of your .aar file.
