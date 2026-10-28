@@ -1,65 +1,22 @@
 # monocle-example-android
-Example Monocle app using the Android SDK
+Example app using the [Monocle Android SDK](https://github.com/spurintel/monocle-sdk-android).
 
-This app is the same as [monocle-sdk-android](https://github.com/spurintel/monocle-sdk-android) with the important distinction that this does not contain the monocle-sdk-android module source.  Rather, this contains the compiled library in `app/libs/monocle.aar` as it would be used in a 3rd party app from a Maven repo.
+This app uses the SDK the way a third-party app would: as the compiled library in `app/libs/monocle.aar`, rather than the SDK's source module. To add the SDK to your own app, follow the installation steps in the [SDK README](https://github.com/spurintel/monocle-sdk-android#installation).
 
-## Manual dependency inclusion
+## Running the example
 
-To include the Monocle .aar file as a dependency in your Android project, you can follow these steps:
-1. Create a libs Directory:
-If you don't have one already, create a directory named libs at the root level of your project.
-2. Place the .aar File:
-Copy the Monocle .aar file into the libs directory you just created.
-3. Modify build.gradle(.kts) (Module Level):
-Open the build.gradle(.kts) file of the module where you want to use the Monocle library.
-Add the following lines within the android block:
-```gradle
-android {
-    // ... other configurations
+1. Set your Monocle app's **Publishable key** as `publishable_key` in `app/src/main/res/values/strings.xml`. You'll find it on the app's **Settings** page under **API Keys** in the [Monocle Dashboard](https://app.spur.us/monocle).
+2. Open the project in Android Studio and run the `app` configuration on a device or emulator.
 
-    repositories {
-        flatDir {
-            dirs("libs")
-            // dirs 'libs' // if not .kts
-        }
-    }
-}
-```
-Add the dependency for the .aar file in the dependencies block:
-```gradle
-dependencies {
-    // ... other dependencies
+The app asks for location permission, then runs an assessment and shows the encrypted result. Location is optional: if you deny it, the assessment runs without it.
 
-    implementation(files("libs/monocle.aar")) // Replace 'monocle.aar' with the actual file name
-}
-```
+## Where to look
 
-Add the dependencies for the monocle sdk
-```gradle
+- `MonocleExampleApplication.kt`: sets up Monocle once, in the `Application` class.
+- `MainActivity.kt`: requests location permission and runs the assessment.
+- `AndroidManifest.xml`: the permissions the SDK uses.
+- `app/build.gradle.kts`: the `.aar` and the libraries the SDK needs.
 
-dependencies {
-    // ... other dependencies
+## Updating the SDK
 
-    implementation (libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.play.services)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.play.services.location)
-    implementation(libs.okhttp)
-}
-```
-
-4. Sync Project:
-After making these changes, click "Sync Now" in the bar that appears at the top of Android Studio to synchronize your project with the updated Gradle files.
-
-### Explanation:
-The repositories block with flatDir tells Gradle to look for dependencies in the libs directory.
-The implementation line in the dependencies block includes the .aar file as a dependency, making its classes and resources available to your module.
-
-## Site Token
-In order for the SDK to work you must set the `site_token` res/values/strings.xml file.  This is the token that is provided to you by Monocle when you sign up for an account.
-
-### Important Notes:
-Replace monocle.aar with the actual name of your .aar file.
-If you encounter any issues, double-check that the .aar file is correctly placed in the libs directory and that the file path in the implementation line is accurate.
-If the Monocle library has any transitive dependencies (dependencies of its own), you might need to include those as well in your build.gradle file.
-By following these steps, you should be able to successfully include the Monocle .aar file as a dependency in your Android project and utilize its functionality
+Download `monocle.aar` from the latest [SDK release](https://github.com/spurintel/monocle-sdk-android/releases) and replace `app/libs/monocle.aar`.
